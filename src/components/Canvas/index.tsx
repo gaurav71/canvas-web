@@ -49,7 +49,8 @@ const Canvas = () => {
       if (_id === shape._id) {
         return {
           ...shape,
-          ...attributes
+          attributes,
+          text
         }
       } else {
         return shape
