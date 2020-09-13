@@ -1,34 +1,28 @@
 
-import React, { useState } from 'react';
+import { Button } from 'antd';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useCreateCanvasMutation, useIsLoginQuery } from '../../generated/graphql';
-import { paths } from '../Routes';
-
-import { Spin, Button } from 'antd';
-
-import AntWrapper from '../AntWrapper/index'
-import { ButtonBox, Container } from './styled';
+import { useCreateCanvasMutation } from '../../generated/graphql';
 import PageLoader from '../@common/PageLoader';
+import AntWrapper from '../AntWrapper/index';
+import { paths } from '../Routes';
+import { ButtonBox, Container } from './styled';
 
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = ({}) => {
 
-  const { loading, error, data } = useIsLoginQuery()
   const [createCanvas, { loading: creatingCanvas,  data: createCanvasData }] = useCreateCanvasMutation()
   const history = useHistory()
 
+  useEffect(() => {
+    if (createCanvasData?.createCanvas._id) {
+      history.push(`${paths.CANVAS}/${createCanvasData?.createCanvas._id}`)
+    }
+  }, [createCanvasData])
 
-  if (loading) {
-    return <PageLoader />
-  }
-
-  if (!data?.isLogin) {
-    history.replace(`${paths.AUTH}`)
-  }
-
-  if (createCanvasData?.createCanvas._id) {
-    history.push(`${paths.CANVAS}/${createCanvasData?.createCanvas._id}`)
+  const handleCreateCanvas = () => {
+    createCanvas({variables: { name: 'temp name' }})
   }
 
   return (
@@ -38,7 +32,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
           <ButtonBox>
             <Button 
               type="primary"
-              onClick={() => createCanvas({variables: { name: 'temp name' }})}
+              onClick={handleCreateCanvas}
             >
               Create New Canvas
             </Button>

@@ -1,13 +1,15 @@
 import React from 'react'
 import { Rect } from 'react-konva'
 import { ShapeType } from '../../../generated/graphql'
+import { ShapeContextType, useShapeContext } from '../context'
 
 interface RectPropsType {
   shape: ShapeType;
-  handleDragEnd: Function
 }
 
-const RectWrapper: React.FC<RectPropsType> = ({ shape: {_id, type, attributes }, handleDragEnd }) => {
+const RectWrapper: React.FC<RectPropsType> = ({ shape: {_id, type, attributes } }) => {
+
+  const { handleDragEnd } = useShapeContext() as ShapeContextType
 
   return (
     <Rect

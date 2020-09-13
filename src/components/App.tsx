@@ -1,18 +1,7 @@
 import React from 'react';
-import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 import { Routes } from './Routes';
-import { url } from '../config';
-
-const link = createHttpLink({
-  uri: `${url}/graphql`,
-  credentials: 'include'
-});
-
-const client = new ApolloClient({
-  uri: `${url}/graphql`,
-  cache: new InMemoryCache(),
-  link
-});
+import { client } from '../graphql';
 
 interface AppProps {}
 

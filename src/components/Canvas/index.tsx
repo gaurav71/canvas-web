@@ -5,16 +5,22 @@ import { ShapeType, useCreateShapeMutation, useDeleteShapeMutation, useGetShapes
 import PageLoader from '../@common/PageLoader';
 import AntWrapper from '../AntWrapper';
 import Shape from '../Shapes';
+import { CanvasContext } from './context';
 import { Container } from './styled';
+
+interface ParamsType {
+  id: string;
+}
 
 const Canvas = () => {
 
-  const [getShapes, { loading: gettingShapes, error, data: shapesData }] = useGetShapesLazyQuery()
+  const [getShapes, { loading: gettingShapes, data: shapesData }] = useGetShapesLazyQuery()
   const [createShape, { loading: creatingShape, data: createShapeData }] = useCreateShapeMutation()
   const [deleteShape] = useDeleteShapeMutation()
   const [updateShapeMutation] = useUpdateShapeMutation()
+
   const [state, setState] = useState<ShapeType[] | null>(null)
-  const { id }: {id: string} = useParams()
+  const { id }: ParamsType = useParams()
   const containerRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -29,12 +35,8 @@ const Canvas = () => {
 
   useEffect(() => {
     if (createShapeData?.createShape) {
-      setState((_state) => {
-        if (!_state) {
-          return [createShapeData.createShape]
-        }
-        return [..._state, createShapeData.createShape]
-      })
+      const { createShape: newShape } = createShapeData
+      setState(oldState => !oldState ? [newShape] : [...oldState, newShape])
     } 
   }, [createShapeData])
 
@@ -45,16 +47,12 @@ const Canvas = () => {
 
   const updateShape = (_id: string, { attributes, text }: ShapeType) => {
     updateShapeMutation({ variables: { _id, attributes, text } })
+
     setState((_state: any) => _state?.map((shape: ShapeType) => {
-      if (_id === shape._id) {
-        return {
-          ...shape,
-          attributes,
-          text
-        }
-      } else {
+      if (_id !== shape._id) {
         return shape
-      }
+      } 
+      return { ...shape, attributes, text }
     }))
   }
 
@@ -64,30 +62,37 @@ const Canvas = () => {
 
   const loader = gettingShapes || !state || creatingShape
 
+  const contextValue = {
+    addShape, 
+    updateShape, 
+    deleteShape, 
+    canvasLoader: loader,
+    a: 10
+  }
+
   const width = containerRef.current ? containerRef.current.clientHeight : 0
   const height = containerRef.current ? containerRef.current.clientWidth : 0
 
   return (
-    <AntWrapper 
-      toolbar={true}
-      addShape={addShape}
-    >
-      <Container ref={containerRef}>
-        {loader ? <PageLoader /> : state &&
-        <Stage width={window.innerWidth} height={window.innerHeight}>
-          <Layer>
-            {state.map((shape) => (
-              <Shape 
-                key={shape._id} 
-                shape={shape}
-                updateShape={updateShape} 
-                removeShape={removeShape}
-              />
-            ))}
-          </Layer>
-        </Stage>}
-      </Container>
-    </AntWrapper>
+    <CanvasContext.Provider value={contextValue}>
+      <AntWrapper 
+        toolbar={true}
+      >
+        <Container ref={containerRef}>
+          {loader ? <PageLoader /> : state &&
+          <Stage width={window.innerWidth} height={window.innerHeight}>
+            <Layer>
+              {state.map((shape) => (
+                <Shape 
+                  key={shape._id} 
+                  shape={shape}
+                />
+              ))}
+            </Layer>
+          </Stage>}
+        </Container>
+      </AntWrapper>
+    </CanvasContext.Provider>
   );
 }
 

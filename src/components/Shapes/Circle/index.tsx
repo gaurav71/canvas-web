@@ -1,15 +1,16 @@
 import React from 'react'
 import { Circle } from 'react-konva';
 import { ShapeType } from '../../../generated/graphql'
+import { ShapeContextType, useShapeContext } from '../context';
 
 interface RectPropsType {
   shape: ShapeType;
-  handleDragEnd: Function
 }
 
+const CircleWrapper: React.FC<RectPropsType> = ({ shape: {_id, attributes } }) => {
 
-const CircleWrapper: React.FC<RectPropsType> = ({ shape: {_id, type, attributes }, handleDragEnd }) => {
-  console.log(attributes)
+  const { handleDragEnd } = useShapeContext() as ShapeContextType
+
   return (
     <Circle 
       id={_id}

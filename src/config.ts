@@ -1,1 +1,1 @@
-export const url = 'http://ec2-3-12-36-250.us-east-2.compute.amazonaws.com:5000'
+export const url = 'http://localhost:5000'

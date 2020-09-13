@@ -14,20 +14,22 @@ import {
 } from '@ant-design/icons';
 import { Container, CustomHeader, CustomToolBar, LogoDiv } from './styled';
 import PageLoader from '../@common/PageLoader';
+import { CanvasContextType, useCanvasContext } from '../Canvas/context';
+import { circleAttributesDefault, rectAttributesDefault } from '../Shapes/defaultAttributes';
 
 const { Header, Sider, Content } = Layout;
 
 interface AntWrapperProps {
-  children: any,
-  toolbar?: boolean,
-  addShape?: Function,
+  children: any;
+  toolbar?: boolean;
 }
 
-export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar, addShape }) => {
+export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar }) => {
 
-  const { loading, error, data } = useIsLoginQuery()
+  const { loading, data } = useIsLoginQuery()
   const [collapsed, setCollapsed] = useState(true)
   const history = useHistory()
+  const { addShape } = useCanvasContext() as CanvasContextType
 
   if (loading) {
     return (
@@ -41,30 +43,16 @@ export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar, addSh
 
   const handleAddRect = () => {
     const attributes = {
-      x: 100,
-      y: 100,
-      width: 200,
-      height: 100,
-      fill: 'white'
+      ...rectAttributesDefault
     }
-    console.log(attributes)
-    if (addShape) {
-      addShape({ attributes, type: 'rect' })
-    }
+    addShape({ attributes, type: 'rect' })
   }
 
   const handleAddCircle = () => {
     const attributes = {
-      x: 100,
-      y: 100,
-      radius: 50,
-      points:[0, 0, 100, 0, 100, 100],
-      fill: 'white'
+      ...circleAttributesDefault
     }
-    console.log(attributes)
-    if (addShape) {
-      addShape({ attributes, type: 'circle' })
-    }
+    addShape({ attributes, type: 'circle' })
   }
 
   const renderCustomToolBar = () => {
