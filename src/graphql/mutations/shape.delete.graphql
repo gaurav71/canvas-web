@@ -1,0 +1,13 @@
+mutation deleteShape(
+  $_id: String!
+) {
+  deleteShape (
+    _id: $_id
+  )
+}
+
+mutation deleteShapes(
+  $canvasId: String!
+) {
+  deleteShapes (canvasId: $canvasId)
+}

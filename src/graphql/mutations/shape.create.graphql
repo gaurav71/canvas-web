@@ -1,0 +1,15 @@
+mutation createShape(
+  $canvasId: String!, 
+  $type: String!, 
+  $text: String, 
+  $attributes: JSON!
+) {
+  createShape (input: {
+    canvasId: $canvasId
+    type: $type
+    text: $text
+    attributes: $attributes
+  }){
+  	...ShapeFragment
+  }
+}

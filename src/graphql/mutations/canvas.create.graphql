@@ -1,0 +1,5 @@
+mutation createCanvas($name: String!) {
+  createCanvas(name: $name){
+  	...CanvasFragment
+  }
+}

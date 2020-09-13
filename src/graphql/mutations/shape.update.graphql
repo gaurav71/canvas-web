@@ -1,0 +1,14 @@
+mutation updateShape(
+  $_id: String!
+  $text: String, 
+  $attributes: JSON!
+) {
+  updateShape (
+    _id: $_id
+    input: {
+      text: $text
+      attributes: $attributes
+  }){
+  	...ShapeFragment
+  }
+}

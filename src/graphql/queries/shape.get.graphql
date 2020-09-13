@@ -1,0 +1,11 @@
+query getShape($_id: String!) {
+  getShape(_id: $_id) {
+    ...ShapeFragment
+  } 
+}
+
+query getShapes($canvasId: String!) {
+  getShapes(canvasId: $canvasId) {
+    ...ShapeFragment
+  } 
+}

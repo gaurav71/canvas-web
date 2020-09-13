@@ -1,0 +1,8 @@
+fragment CanvasFragment on CanvasType {
+	_id
+  creatorId
+  name
+  members
+  createdAt
+  updatedAt
+}

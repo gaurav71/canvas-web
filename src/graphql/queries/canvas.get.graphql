@@ -1,0 +1,11 @@
+query getCanvas($_id: String!) {
+  getCanvas(_id: $_id) {
+    ...CanvasFragment
+  } 
+}
+
+query getAllCanvas {
+  getAllCanvas {
+    ...CanvasFragment
+  } 
+}

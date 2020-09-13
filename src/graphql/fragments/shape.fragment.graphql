@@ -1,0 +1,9 @@
+fragment ShapeFragment on ShapeType {
+  _id
+  canvasId
+  type
+  text
+  attributes
+  createdAt
+  updatedAt
+}

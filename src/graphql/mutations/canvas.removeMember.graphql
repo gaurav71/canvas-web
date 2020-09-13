@@ -1,0 +1,3 @@
+mutation removeMemberFromCanvas($_id: String!, $userId: String!){
+  removeMemberFromCanvas(_id: $_id, userId: $userId)
+}

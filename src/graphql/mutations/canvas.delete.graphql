@@ -1,0 +1,3 @@
+mutation deleteCanvas($_id: String!){
+  deleteCanvas(_id: $_id)
+}

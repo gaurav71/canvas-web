@@ -1,0 +1,3 @@
+mutation addMemberToCanvas($_id: String!, $userId: String!){
+  addMemberToCanvas(_id: $_id, userId: $userId)
+}
