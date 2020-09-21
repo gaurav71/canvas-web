@@ -128,6 +128,11 @@ export type UpdateShapeInput = {
   attributes: Scalars['JSON'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  helloSubscription: Scalars['String'];
+};
+
 export type CanvasFragmentFragment = (
   { __typename?: 'CanvasType' }
   & Pick<CanvasType, '_id' | 'creatorId' | 'name' | 'members' | 'createdAt' | 'updatedAt'>
@@ -258,6 +263,14 @@ export type GetAllCanvasQuery = (
   )> }
 );
 
+export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HelloQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'hello'>
+);
+
 export type GetShapeQueryVariables = Exact<{
   _id: Scalars['String'];
 }>;
@@ -298,6 +311,14 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'logout'>
+);
+
+export type HelloSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HelloSubscriptionSubscription = (
+  { __typename?: 'Subscription' }
+  & Pick<Subscription, 'helloSubscription'>
 );
 
 export const CanvasFragmentFragmentDoc = gql`
@@ -639,6 +660,36 @@ export function useGetAllCanvasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllCanvasQueryHookResult = ReturnType<typeof useGetAllCanvasQuery>;
 export type GetAllCanvasLazyQueryHookResult = ReturnType<typeof useGetAllCanvasLazyQuery>;
 export type GetAllCanvasQueryResult = Apollo.QueryResult<GetAllCanvasQuery, GetAllCanvasQueryVariables>;
+export const HelloDocument = gql`
+    query hello {
+  hello
+}
+    `;
+
+/**
+ * __useHelloQuery__
+ *
+ * To run a query within a React component, call `useHelloQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHelloQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useHelloQuery(baseOptions?: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>) {
+        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
+      }
+export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>) {
+          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
+        }
+export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
+export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
+export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
 export const GetShapeDocument = gql`
     query getShape($_id: String!) {
   getShape(_id: $_id) {
@@ -764,3 +815,29 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const HelloSubscriptionDocument = gql`
+    subscription helloSubscription {
+  helloSubscription
+}
+    `;
+
+/**
+ * __useHelloSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useHelloSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useHelloSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHelloSubscriptionSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useHelloSubscriptionSubscription(baseOptions?: Apollo.SubscriptionHookOptions<HelloSubscriptionSubscription, HelloSubscriptionSubscriptionVariables>) {
+        return Apollo.useSubscription<HelloSubscriptionSubscription, HelloSubscriptionSubscriptionVariables>(HelloSubscriptionDocument, baseOptions);
+      }
+export type HelloSubscriptionSubscriptionHookResult = ReturnType<typeof useHelloSubscriptionSubscription>;
+export type HelloSubscriptionSubscriptionResult = Apollo.SubscriptionResult<HelloSubscriptionSubscription>;

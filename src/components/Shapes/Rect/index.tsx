@@ -7,21 +7,18 @@ interface RectPropsType {
   shape: ShapeType;
 }
 
-const RectWrapper: React.FC<RectPropsType> = ({ shape: {_id, type, attributes } }) => {
+const RectWrapper: React.FC<RectPropsType> = ({ shape: {_id, attributes } }) => {
 
-  const { handleDragEnd } = useShapeContext() as ShapeContextType
+  const { handleDragEnd, handleDragging } = useShapeContext() as ShapeContextType
 
   return (
     <Rect
       id={_id}
-      x={attributes.x}
-      y={attributes.y}
-      width={attributes.width}
-      height={attributes.height}
-      fill={attributes.fill}
+      {...attributes}
       draggable={true}
       shadowBlur={10}
       onDragEnd={handleDragEnd as any}
+      onDragMove={(evt) => handleDragging(evt)}
     />
   )
 }

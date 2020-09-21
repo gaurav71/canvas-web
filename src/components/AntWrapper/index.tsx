@@ -1,58 +1,56 @@
 
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useIsLoginQuery } from '../../generated/graphql';
-import { paths } from '../Routes';
+import React, { useState } from 'react'
+import { Layout, Menu, Button } from 'antd'
 
-import { Spin, Layout, Menu, Button } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
-} from '@ant-design/icons';
-import { Container, CustomHeader, CustomToolBar, LogoDiv } from './styled';
-import PageLoader from '../@common/PageLoader';
-import { CanvasContextType, useCanvasContext } from '../Canvas/context';
-import { circleAttributesDefault, rectAttributesDefault } from '../Shapes/defaultAttributes';
+} from '@ant-design/icons'
 
-const { Header, Sider, Content } = Layout;
+import { ShapeInput } from '../../generated/graphql'
+
+import PageLoader from '../@common/PageLoader'
+import { TypeOfShape } from '../Shapes/types'
+import { CanvasContextType, useCanvasContext } from '../Canvas/context'
+import { circleAttributesDefault, rectAttributesDefault } from '../Shapes/defaultAttributes'
+
+import { 
+  Container, 
+  CustomHeader, 
+  CustomToolBar, 
+  LogoDiv 
+} from './styled'
+
+const { Header, Sider, Content } = Layout
 
 interface AntWrapperProps {
-  children: any;
-  toolbar?: boolean;
+  toolbar?: boolean
+  loader? : boolean
 }
 
-export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar }) => {
+export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar, loader }) => {
 
-  const { loading, data } = useIsLoginQuery()
   const [collapsed, setCollapsed] = useState(true)
-  const history = useHistory()
-  const { addShape } = useCanvasContext() as CanvasContextType
+  const canvasContext = useCanvasContext() as CanvasContextType
 
-  if (loading) {
-    return (
-      <PageLoader />
-    )
-  }
+  const handleAddShape = (type: TypeOfShape) => {
+    let attributes: any = null
 
-  if (!data?.isLogin) {
-    history.replace(`${paths.AUTH}`)
-  }
-
-  const handleAddRect = () => {
-    const attributes = {
-      ...rectAttributesDefault
+    switch(type) {
+      case 'rect': attributes = {...rectAttributesDefault}; break;
+      case 'circle': attributes = {...circleAttributesDefault}; break;
     }
-    addShape({ attributes, type: 'rect' })
-  }
 
-  const handleAddCircle = () => {
-    const attributes = {
-      ...circleAttributesDefault
+    const shape: ShapeInput = {
+      canvasId: canvasContext.canvasId,
+      type: type,
+      attributes
     }
-    addShape({ attributes, type: 'circle' })
+
+    canvasContext.addShape(shape)
   }
 
   const renderCustomToolBar = () => {
@@ -60,13 +58,13 @@ export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar }) => 
       <>
         <Button 
           type="primary"
-          onClick={handleAddRect}
+          onClick={() => handleAddShape('rect')}
         >
           Add Rect
         </Button>
         <Button 
           type="primary"
-          onClick={handleAddCircle}
+          onClick={() => handleAddShape('circle')}
         >
           Add Circle
         </Button>
@@ -114,7 +112,7 @@ export const AntWrapper: React.FC<AntWrapperProps> = ({ children, toolbar }) => 
                 minHeight: 280,
               }}
             >
-              {children}
+              {loader ? <PageLoader /> : children}
             </Content>
           </Layout>
         </Layout>

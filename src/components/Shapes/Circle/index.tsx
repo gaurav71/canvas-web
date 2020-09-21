@@ -14,10 +14,7 @@ const CircleWrapper: React.FC<RectPropsType> = ({ shape: {_id, attributes } }) =
   return (
     <Circle 
       id={_id}
-      x={attributes.x}
-      y={attributes.y}
-      radius={attributes.radius}
-      points={attributes.points}
+      {...attributes}
       tension={0.5}
       closed
       stroke="black"

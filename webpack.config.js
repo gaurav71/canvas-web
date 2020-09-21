@@ -1,10 +1,12 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { SourceMapDevToolPlugin } = require("webpack");
 
 module.exports = {
   mode: 'development',
   entry: "./src/index.tsx",
+  devtool: 'inline-source-map',
   resolve: {
     extensions: [".js", ".jsx", ".json", ".ts", ".tsx", '.less'],
   },
@@ -61,12 +63,6 @@ module.exports = {
         }, {
           loader: 'less-loader', // compiles Less to CSS
         }]
-      },
-      {
-        test: /\.js$/,
-        enforce: 'pre',
-        use: ['source-map-loader'],
-        exclude: [/node_modules/],
       },
     ],
   },

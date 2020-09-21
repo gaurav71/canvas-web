@@ -3,8 +3,9 @@ import {
   BrowserRouter as Router,
   Switch,
   Route, 
-  Redirect
+  Redirect 
 } from "react-router-dom";
+
 import PageLoader from './@common/PageLoader';
 import useCheckAuth from './@customHooks/useCheckAuth';
 
@@ -26,38 +27,43 @@ interface RoutesProps { }
 export const Routes: React.FC<RoutesProps> = ({ }) => {
 
   const [checkingLogin, isLogin] = useCheckAuth()
-
+  
   if (checkingLogin) {
     return <PageLoader />
   }
 
   const withAuthRoutes = (<>
-    <Route
-      path = {`${paths.CANVAS}/:id`}
-      component = {Canvas}
-    />
-    <Route
-      path = {paths.HOME}
-      component = {Home}
-    />
-    <Redirect to = {paths.HOME} />
+    <Switch>
+      <Route
+        path = {`${paths.CANVAS}/:id`}
+        component = {Canvas}
+      />
+      <Route
+        path = {paths.HOME}
+        component = {Home}
+      />
+      <Redirect
+        to = {paths.HOME}
+      />
+    </Switch>
   </>)
 
   const withoutAuthRoutes = (<>
-    <Route
-      path = {paths.AUTH}
-      component = {Auth}
-    />
-    <Redirect 
-      from='/' 
-      to = {paths.AUTH} />
+    <Switch>
+      <Route exact
+        path = {paths.AUTH}
+        component = {Auth}
+      />
+      <Redirect
+        from = '/'
+        to = {paths.AUTH}
+      />
+    </Switch>
   </>)
 
   return (
     <Router>
-      <Switch>
-        {isLogin ? withAuthRoutes : withoutAuthRoutes}
-      </Switch>
+      {isLogin ? withAuthRoutes : withoutAuthRoutes}
     </Router>
   )
 }
