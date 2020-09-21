@@ -25,7 +25,7 @@ const Shape: React.FC<ShapePropsType> = ({ shape }) => {
   }
 
   const handleDragging = (e: any) => {
-    updateShapeBySocket(e.target.id(), e.target.attrs)
+    updateShapeBySocket(e.target.id(), { attributes: e.target.attrs })
   }
 
   const handleDragEnd = (e: any) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import socketIOClient from "socket.io-client"
 import { Stage, Layer } from 'react-konva'
 import { useParams } from 'react-router-dom'
@@ -10,8 +10,6 @@ import {
   useCreateShapeMutation, 
   useDeleteShapeMutation, 
   useGetShapesLazyQuery, 
-  useHelloLazyQuery, 
-  useHelloSubscriptionSubscription, 
   useUpdateShapeMutation 
 } from '../../generated/graphql'
 
@@ -21,6 +19,7 @@ import AntWrapper from '../AntWrapper'
 import Shape from '../Shapes'
 
 import { CanvasContext, CanvasContextType } from './context'
+import { actionTypes, initialState, reducer } from './reducer'
 import { Container } from './styled'
 
 const events = {
@@ -31,6 +30,7 @@ const events = {
   SHAPE_UPDATED: 'SHAPE_UPDATED',
   SHAPE_DELETED: 'SHAPE_DELETED'
 } as const
+
 
 interface ParamsType {
   id: string
@@ -46,18 +46,12 @@ const Canvas: React.FC<CanvasPropsType> = () => {
   const [deleteShapeMutation] = useDeleteShapeMutation()
   const [updateShapeMutation] = useUpdateShapeMutation()
 
-  const [state, setState] = useState<ShapeType[] | null>(null)
+  const [state, dispatch] = useReducer(reducer, initialState)
   const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null)
 
   const { id }: ParamsType = useParams()
   const containerRef = useRef<HTMLInputElement>(null)
 
-  const {data, loading, error} = useHelloSubscriptionSubscription()
-  const [helloQuery] = useHelloLazyQuery()
-
-  useEffect(() => {
-    helloQuery()
-  }, [])
 
   useEffect(() => {
     const socketConnection = socketIOClient(`${socketIOurl}`);
@@ -79,8 +73,11 @@ const Canvas: React.FC<CanvasPropsType> = () => {
 
 
   useEffect(() => {
-    if (shapesData?.getShapes) {
-      setState(shapesData.getShapes)
+    if (shapesData?.getShapes && state.shapesData.length === 0) {
+      dispatch({
+        type: actionTypes.SET_DATA,
+        payload: shapesData.getShapes
+      })
     } 
   }, [shapesData])
 
@@ -109,9 +106,8 @@ const Canvas: React.FC<CanvasPropsType> = () => {
       _id
     }
 
-    console.log(shape.attributes, data.attributes, data)
-    shapeUpdated(data)
     updateShapeMutation({ variables: data })
+    shapeUpdated(data)
   }
 
 
@@ -128,38 +124,28 @@ const Canvas: React.FC<CanvasPropsType> = () => {
 
   const shapeAdded = (newShape: ShapeType) => {
 
-    setState((state) => {
-      if (!state) {
-        return [newShape]
-      } else {
-        return [...state, newShape]
-      }
+    dispatch({
+      type: actionTypes.ADD_SHAPE,
+      payload: newShape
     })
+
   }
 
 
   const shapeUpdated = (updatedShape: Partial<ShapeType>) => {
-
-    const { _id } = updatedShape
-    console.log(updatedShape.attributes)
-    setState((state) => {
-      if (!state) {
-        return state
-      }
-      const newState = state.map((shape) => shape._id === _id ? ({...shape, ...updatedShape}) : shape)      
-      console.log({newState})
-      return newState
+    console.log({updatedShape})
+    dispatch({
+      type: actionTypes.UPDATE_SHAPE,
+      payload: updatedShape
     })
   }
 
   
   const shapeDeleted = (_id: string) => {
 
-    setState((state) => {
-      if (!state) {
-        return state
-      }
-      return state.filter((shape) => shape._id !== _id)
+    dispatch({
+      type: actionTypes.DELETE_SHAPE,
+      payload: _id
     })
   }
 
@@ -169,11 +155,10 @@ const Canvas: React.FC<CanvasPropsType> = () => {
     if (socket) {
 
       const data = {
-        ...shape,
-        _id,
+        shape: {...shape, _id},
         canvasId: id
       } as Partial<ShapeType>
-
+      console.log({data})
       socket.emit(events.CANVAS_SHAPE_CHANGE, data)
     }
   }
@@ -198,7 +183,7 @@ const Canvas: React.FC<CanvasPropsType> = () => {
             <Layer>
 
               <CanvasContext.Provider value={contextValue}>
-                {state && state.map((shape) => (
+                {state.shapesData.map((shape) => (
                 <Shape 
                   key={shape._id} 
                   shape={shape}

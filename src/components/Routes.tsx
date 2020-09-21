@@ -1,17 +1,19 @@
 import React from 'react';
+import loadable from '@loadable/component'
 import {
   BrowserRouter as Router,
   Switch,
   Route, 
   Redirect 
-} from "react-router-dom";
+} from "react-router-dom"
 
-import PageLoader from './@common/PageLoader';
-import useCheckAuth from './@customHooks/useCheckAuth';
+import PageLoader from './@common/PageLoader'
+import useCheckAuth from './@customHooks/useCheckAuth'
 
 import Auth from './Auth/'
-import Canvas from './Canvas';
-import Home from './Home';
+
+const Canvas = loadable(() => import('./Canvas'))
+const Home = loadable(() => import('./Home'))
 
 export const paths = {
   AUTH: '/auth',

@@ -13,6 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/client": "^3.1.5",
+    "@loadable/component": "^5.13.2",
+    "@types/loadable__component": "^5.13.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/socket.io-client": "^1.4.33",
     "antd": "^4.6.3",
